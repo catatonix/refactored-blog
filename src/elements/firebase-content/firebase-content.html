@@ -8,11 +8,11 @@
     <style>
       :host {
         display: block;
-        overflow: hidden;
       }
       #content{
+        overflow: hidden;
+        max-width: 100%;
         opacity: 0;
-        outline-offset: -3px;
         transition: opacity 0.25s ease-in;
         float: left;
         min-height: 1em;
@@ -45,7 +45,7 @@
         width: 60px;
         min-width: 0;
         height: 20px;
-        top: -20px;
+        top: -21px;
       }
         .button span{
           font-size: 12px;
@@ -76,7 +76,6 @@
         opacity: 1;
         transition: opacity 0.25s ease-in;
         position: absolute;
-        top: 40px;
         left: 0;
         resize: both;
         background: white;
@@ -106,12 +105,13 @@
 
   <script>
     /* TODO:
-    - make save button display toast (and hide rich editor)
+    - make save button display toast if successful (and hide rich editor)
     - add backup functionality (save last 10 versions of text field and use most recent)
     - add functionality for admin options to only be displayed to admins!!! (important)
     - hide unused edit buttons (ie photo)
     - let the buttons be usable on focus
     - (external, add auto path generation somehow for data storage)
+    - make loading color externally configurable
     - Endgame: move all firebase code into this module including initialisation and make it totally reusable (keep dependencies within module) (wire up firebase from a setup file?)
     */
 
