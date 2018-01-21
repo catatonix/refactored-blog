@@ -44,14 +44,23 @@
       }
       ready(){
         super.ready();
-        this._render();
-      }
+        window.onresize = this._render.bind(this);
+      } 
 
       _render(){
         if (this.size == null){
           this.size = "1140px";
         }
-        this.updateStyles({"width": this.size});
+        var minPadding = 20;  //px
+        if (window.innerWidth < parseInt(this.size) + minPadding){
+          this.goTablet();
+        }else{
+          this.updateStyles({"width": this.size});
+        }
+      }
+
+      goTablet(){
+        this.updateStyles({"width": "90%" });
       }
     }
 

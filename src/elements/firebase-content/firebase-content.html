@@ -8,9 +8,11 @@
     <style>
       :host {
         display: block;
+        overflow: hidden;
       }
       #content{
         opacity: 0;
+        outline-offset: -3px;
         transition: opacity 0.25s ease-in;
         float: left;
         min-height: 1em;
@@ -19,6 +21,15 @@
       #mainButtons{
         display: none;
         position: fixed;
+      }
+      #spinner{
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        -webkit-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+        -moz-transform: translateX(-50%);
+        -o-transform: translateX(-50%);
       }
       :host([loaded]) #spinner{
         opacity: 0;
@@ -159,7 +170,7 @@
       _contentChanged(val){
         if ((!(Object.keys(val).length === 0 && val.constructor === Object)) || (typeof(val)==String)){
           this.processed_content = val;
-          console.log("> data changed at: ", this.path, "\""+this.processed_content+"\"");
+          console.log("> firebase-content data update at " + this.path, ": \""+this.processed_content+"\"");
           this.$.content.innerHTML = this.processed_content;
           this.loaded = true;
         }else{
