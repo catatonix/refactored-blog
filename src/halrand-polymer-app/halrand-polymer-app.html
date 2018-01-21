@@ -1,0 +1,176 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+
+
+<link rel="import" href="../elements/module-landing/module-landing.html">
+<link rel="import" href="../elements/firebase-content/firebase-content.html">
+
+<link rel="stylesheet" type="text/css" href="../styles/reset.css">
+<link href="https://fonts.googleapis.com/css?family=Rubik" rel="stylesheet">
+
+<dom-module id="halrand-polymer-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      module-landing:not(:defined){
+        background-color: cyan;
+      }
+
+
+    </style>
+   <body>
+
+    <firebase-app
+      auth-domain="node-191821.firebaseapp.com"
+      database-url="https://node-191821.firebaseio.com"
+      api-key="AIzaSyBwoyInnoIEbBSX4TaPRwEZzIK5kyHh7JE"
+      storage-bucket="node-191821.appspot.com"
+      messaging-sender-id="317021301643"></firebase-app>
+    <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError"></firebase-auth>      
+      
+    <module-landing>
+      <firebase-content path="pages/home/tagline"></firebase-content>
+    </module-landing>
+
+
+    
+
+    <div class="module-landing">
+      <div class="inner" id="db-tagline" style="display: none">
+          <h1 id="val" class="">
+              
+          </h1>
+          <img id="goDown" class="icon">
+      </div>
+  </div>
+  <div id="page" class="module-content">
+      <h2>
+        Recent Projects
+      </h2>
+      <div class="module-project">
+        <div class="project">
+            <div class="image mac-de-marco"></div>
+            <h3>Mac DeMarco - 2</h3>
+          </div>
+          <div class="project">
+            <div class="image mac-de-marco"></div>
+            <h3>Mac DeMarco - 2</h3>
+          </div>
+          <div class="project">
+            <div class="image mac-de-marco"></div>
+            <h3>Mac DeMarco - 2</h3>
+          </div>
+          <div class="project">
+            <div class="image mac-de-marco"></div>
+            <h3>Mac DeMarco - 2</h3>
+          </div>
+          <div class="project">
+            <div class="image mac-de-marco"></div>
+            <h3>Mac DeMarco - 2</h3>
+          </div>
+          <div class="project">
+            <div class="image mac-de-marco"></div>
+            <h3>Mac DeMarco - 2</h3>
+          </div>
+          <div class="project">
+            <div class="image mac-de-marco"></div>
+            <h3>Mac DeMarco - 2</h3>
+          </div>
+        </div>
+    </div>
+  
+    <div class="module-footer">
+      <div class="inner">
+        <div class="left">
+          <div class="title">
+            ABOUT ME.
+          </div>
+          <div class="body">
+              After graduating from Westminster School in London in 2015, I was accepted into Brown University, where I studied for 2 years before leaving in order to experience real life. Having recently completed a 3-month graphic design intensive at Shillington College, I am now a graphic designer, living and working in London.              
+          </div>
+          <div class="contact">
+            <span>
+              <a href="mailto:harlan_epstein@brown.edu">harlan_epstein@brown.edu</a>
+            </span>
+            <span>
+              <a href="tel:+44773170207">(+44)7731702074</a>
+            </span>
+          </div>
+        </div>
+        <div class="right">
+          <img class="image" src="assets/brand/portrait.jpg">
+        </div>
+      </div>
+    </div>
+    
+
+    <script src="scripts/dynamics.js"></script>
+
+    <!-- <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase.js"></script>     -->
+    <script>
+      class Page{
+        constructor(){
+          // this.database = firebase.database();
+          
+        } 
+
+        getTitle(){
+          // this.database.ref('site-settings/title').once("value", function(snap){
+          //   console.log("> Title loaded as: " + snap.val());
+          //   document.title = snap.val();
+          // });
+        }
+
+        renderContent(){
+          
+        }        
+
+        render(){
+          this.getTitle(); // todo fix
+        }
+      }
+
+
+    </script>
+  </template>
+
+  <script>
+    /*
+      TODO:
+        - add page routing
+        - add page / add post cms functionality
+        - add menu
+        - add menu cms functionality
+        - add secret login somehow
+    */
+    
+    /**
+     * @customElement
+     * @polymer
+     */
+    class HalrandPolymerApp extends Polymer.Element {
+      static get is() { return 'halrand-polymer-app'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'halrand-polymer-app'
+          }
+        };
+      }
+      _signIn(){
+        this.$.auth.signInWithPopup().then(function(response) {
+             //successful authentication response here
+          }).catch(function(error) {
+              //unsuccessful authentication response here
+          });
+      }
+    }
+
+    window.customElements.define(HalrandPolymerApp.is, HalrandPolymerApp);
+  </script>
+</dom-module>

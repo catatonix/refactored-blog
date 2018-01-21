@@ -1,0 +1,33 @@
+{
+  "name": "mat-elements",
+  "description": "A collection of Material Design web components from the expand.js team",
+  "version": "1.4.1",
+  "license": "BSD-3-Clause",
+  "main": "mat-elements.html",
+  "homepage": "https://expandjs.com/components",
+  "authors": [
+    "Giuliano Rullo <g.rullo@expandjs.com>",
+    "Maurizio Stefàno <m.stefano@expandjs.com>",
+    "Robert Manolea <r.manolea@expandjs.com>"
+  ],
+  "keywords": [
+    "expandjs",
+    "material design",
+    "web components"
+  ],
+  "dependencies": {
+    "codemirror": "Pupix/codemirror#^5.33.0",
+    "font-roboto": "PolymerElements/font-roboto#^1.0.0",
+    "xp-elements": "ExpandJS/xp-elements#^1.0.0"
+  },
+  "_release": "1.4.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.4.1",
+    "commit": "77d0c4df26182c6205c45e02f941302ecf76f570"
+  },
+  "_source": "https://github.com/expandjs/mat-elements.git",
+  "_target": "^1.4.1",
+  "_originalSource": "expandjs/mat-elements",
+  "_direct": true
+}

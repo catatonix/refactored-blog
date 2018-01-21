@@ -1,0 +1,25 @@
+{
+  "name": "xp-script",
+  "description": "A class used to provide script injection functionality",
+  "version": "1.1.1",
+  "license": "BSD-3-Clause",
+  "homepage": "https://expandjs.com/classes/xp-script",
+  "authors": [
+    "Giuliano Rullo <g.rullo@expandjs.com>",
+    "Maurizio Stefàno <m.stefano@expandjs.com>",
+    "Robert Manolea <r.manolea@expandjs.com>"
+  ],
+  "keywords": [
+    "expandjs",
+    "nodejs"
+  ],
+  "_release": "1.1.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.1.1",
+    "commit": "26a109dba41ac48fad1e83dd50d9df091e47660f"
+  },
+  "_source": "https://github.com/ExpandJS/xp-script.git",
+  "_target": "^1.0.0",
+  "_originalSource": "ExpandJS/xp-script"
+}

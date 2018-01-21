@@ -1,0 +1,14 @@
+{
+  "name": "codemirror",
+  "homepage": "https://github.com/Pupix/codemirror",
+  "version": "5.33.0",
+  "_release": "5.33.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "5.33.0",
+    "commit": "8b35df16b3c19f14a6eb6ff11467820c612f41b4"
+  },
+  "_source": "https://github.com/Pupix/codemirror.git",
+  "_target": "^5.33.0",
+  "_originalSource": "Pupix/codemirror"
+}

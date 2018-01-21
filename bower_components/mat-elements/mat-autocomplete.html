@@ -1,0 +1,445 @@
+<!--
+@license
+Copyright (c) 2017 The expand.js authors. All rights reserved.
+This code may only be used under the BSD style license found at https://expandjs.github.io/LICENSE.txt
+The complete set of authors may be found at https://expandjs.github.io/AUTHORS.txt
+The complete set of contributors may be found at https://expandjs.github.io/CONTRIBUTORS.txt
+-->
+
+<!--
+A web component used to display a [Material Design autocomplete](https://material.io/guidelines/patterns/search.html#search-in-app-search).
+
+@element mat-autocomplete
+@since 1.4.0
+@category inputs
+@description A web component used to display a Material Design text-field
+@keywords material input, material design, expandjs, web components
+
+@homepage https://expandjs.com/components/mat-autocomplete
+@repository https://github.com/expandjs/mat-elements
+@source https://github.com/expandjs/mat-elements/blob/master/mat-autocomplete.html
+
+@behavior xp-finder-behavior /bower_components/xp-elements/xp-finder-behavior.html
+@behavior xp-overlay-wrapper /bower_components/xp-elements/xp-overlay-wrapper.html
+@behavior mat-input-value-behavior /bower_components/mat-elements/mat-input-value-behavior.html
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../expandjs/expandjs.html">
+<link rel="import" href="../xp-elements/xp-finder-behavior.html">
+<link rel="import" href="../xp-elements/xp-overlay-wrapper.html">
+<link rel="import" href="mat-ink.html">
+<link rel="import" href="mat-input-styles.html">
+<link rel="import" href="mat-input-value-behavior.html">
+<link rel="import" href="mat-option.html">
+<link rel="import" href="mat-overlay.html">
+
+<dom-module id="mat-autocomplete">
+
+    <template strip-whitespace>
+
+        <style include="mat-input-styles">
+            :host .overlay {
+                margin: 0;
+            }
+        </style>
+
+        <div class="wrapper">
+            <div class="main">
+                <mat-ink class="label" disabled="[[disabled]]" opacity="[[_computeLabelOpacity(floated)]]"><span>[[label]]</span></mat-ink>
+                <mat-ink class="holder" disabled="[[disabled]]"><span><slot id="input" name="input"></slot></span></mat-ink>
+            </div>
+            <div class="underline">
+                <mat-ink class="default" opacity="divider"></mat-ink>
+                <mat-ink class="focused" opacity="divider"></mat-ink>
+            </div>
+            <mat-ink class="helper" disabled="[[disabled]]" opacity="hint">
+                <div class="counter">[[_computeCounter(chars, maxLength)]]</div>
+                <div class="description">[[_computeDescription(description, invalidMessage)]]</div>
+            </mat-ink>
+        </div>
+
+        <mat-overlay position="baseline" target="[[_computeTarget(fullWidth, underline)]]" z="1" on-xp-activate="_handleActivate"><slot></slot></mat-overlay>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            // ELEMENT
+            is: 'mat-autocomplete',
+
+            // BEHAVIORS
+            behaviors: [
+                Polymer.XPFinderBehavior,
+                Polymer.XPOverlayWrapper,
+                Polymer.MATInputValueBehavior
+            ],
+
+            // CLASSES
+            classes: ['autocomplete'],
+
+            /*********************************************************************/
+
+            /**
+             * Fired on focus and input.
+             *
+             * @event xp-input-autocomplete
+             * @param {string} id
+             * @param {string} name
+             * @param {string} value
+             * @bubbles
+             */
+
+            /*********************************************************************/
+
+            /**
+             * Implements the `commitFrom` strategy.
+             *
+             * @method _commitFrom
+             * @private
+             */
+            _commitFrom() {
+
+                // Setting
+                this.value = this.input.value;
+            },
+
+            /**
+             * Implements the `commitIndex` strategy.
+             *
+             * @method _commitIndex
+             * @param {number} value
+             * @private
+             */
+            _commitIndex(value) {
+
+                // Setting
+                this.input.tabIndex = value;
+            },
+
+            /**
+             * Implements the `commitTo` strategy.
+             *
+             * @method _commitTo
+             * @private
+             */
+            _commitTo() {
+
+                // Setting
+                if (this.value !== this.input.value) { this.input.value = this.value; }
+            },
+
+            /**
+             * Implements the `inject` strategy.
+             *
+             * @method _inject
+             * @private
+             */
+            _inject() {
+
+                // Let
+                let input = Object.assign(document.createElement('input'), {type: 'text', value: this.value});
+
+                // Setting
+                XP.setAttribute(input, 'slot', 'input');
+                XP.setAttribute(input, 'type', 'text');
+                XP.setAttribute(input, 'autocomplete', 'off');
+                XP.setAttribute(input, 'autofocus', this.autoFocus);
+                XP.setAttribute(input, 'size', 1);
+                XP.setAttribute(input, 'value', this.value);
+
+                // Listening
+                this.listen(input, 'blur', '_handleBlur');
+                this.listen(input, 'focus', '_handleAutocomplete');
+                this.listen(input, 'input', '_handleAutocomplete');
+                this.listen(input, 'input', '_handleInput');
+
+                // Appending
+                this.ensure('input', Polymer.dom(this).appendChild(input));
+            },
+
+            /**
+             * Implements the `sanitize` strategy.
+             *
+             * @method _sanitize
+             * @param {boolean} [native = false]
+             * @private
+             */
+            _sanitize(native) {
+
+                // Setting
+                if (this.deburr) { this.value = XP.deburr(native ? this.input.value : this.value); }
+            },
+
+            /**
+             * Implements the `update` strategy.
+             *
+             * @method _update
+             * @private
+             */
+            _update() {
+
+                // Setting
+                XP.setAttribute(this.input, 'disabled', this.disabled);
+                XP.setAttribute(this.input, 'name', this.name);
+                XP.setAttribute(this.input, 'readonly', this.readonly);
+                XP.setAttribute(this.input, 'required', this.required);
+            },
+
+            /**
+             * Implements the `validate` strategy.
+             *
+             * @method _validate
+             * @param {string} [invalidMessage]
+             * @private
+             */
+            _validate(invalidMessage) {
+
+                // Asserting
+                XP.assertArgument(XP.isVoid(invalidMessage) || XP.isString(invalidMessage), 1, 'string');
+
+                // Customizing
+                this.input.setCustomValidity(invalidMessage || '');
+                this.input.setCustomValidity(invalidMessage || (this.input.validity.valid === false && this.error) || '');
+
+                // Ensuring
+                this.ensure('invalid', this.input.validity.valid === false);
+                this.ensure('invalidMessage', this.input.validationMessage);
+
+                // Handling
+                this._handleInput();
+            },
+
+            /*********************************************************************/
+
+            // OBSERVERS
+            observers: [
+                '_overlayChanged(overlay)',
+                '_widthChanger(fullWidth, overlay, showed)',
+                'update(deburr, input, readonly)'
+            ],
+
+            // PROPERTIES
+            properties: {
+
+                /**
+                 * If set to true, the diacritics will be replaced with standard latin characters.
+                 *
+                 * @attribute deburr
+                 * @type boolean
+                 * @default false
+                 */
+                deburr: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * The input's description.
+                 *
+                 * @attribute description
+                 * @type string
+                 */
+                description: {
+                    reflectToAttribute: true,
+                    type: String,
+                    value: null
+                },
+
+                /**
+                 * If set to true, the input's label is floated.
+                 *
+                 * @attribute floated
+                 * @type boolean
+                 * @default false
+                 * @readonly
+                 */
+                floated: {
+                    computed: '_computeFloated(empty, floatAlways, floatDisabled, focused, fullWidth, label, type)',
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * If set to true, the label will be always floated.
+                 *
+                 * @attribute float-always
+                 * @type boolean
+                 * @default false
+                 */
+                floatAlways: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * If set to true, the label acts as a placeholder.
+                 *
+                 * @attribute float-disabled
+                 * @type boolean
+                 * @default false
+                 */
+                floatDisabled: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * If set to true, the input is full width.
+                 *
+                 * @attribute full-width
+                 * @type boolean
+                 * @default false
+                 */
+                fullWidth: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * The attribute used as index.
+                 *
+                 * @attribute index-attribute
+                 * @type string
+                 * @default "value"
+                 */
+                indexAttribute: {
+                    type: String,
+                    value: 'value'
+                },
+
+                /**
+                 * The selector used to recognize items.
+                 *
+                 * @attribute item-selector
+                 * @type string
+                 * @default ".option"
+                 */
+                itemSelector: {
+                    type: String,
+                    value: '.option'
+                },
+
+                /**
+                 * If set to true, the helper is hidden.
+                 *
+                 * @attribute no-help
+                 * @type boolean
+                 * @default false
+                 */
+                noHelp: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * If set to true, the input is readonly.
+                 *
+                 * @attribute readonly
+                 * @type boolean
+                 * @default false
+                 */
+                readonly: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * The input's underline.
+                 *
+                 * @attribute underline
+                 * @type Element
+                 * @readonly
+                 */
+                underline: {
+                    readOnly: true,
+                    selector: '.underline'
+                }
+            },
+
+            /*********************************************************************/
+
+            // COMPUTER
+            _computeTarget(fullWidth, underline) {
+                return fullWidth ? this : underline;
+            },
+
+            /*********************************************************************/
+
+            // OBSERVER
+            _overlayChanged(post) {
+
+                // Overriding
+                if (post) { post.__handleHide = () => {}; }
+            },
+
+            // OBSERVER
+            _widthChanger() {
+
+                // Styling
+                this.overlay.style.width = `${this.clientWidth}px`;
+            },
+
+            /*********************************************************************/
+
+            // HANDLER
+            _handleActivate(event) {
+
+                // Let
+                let firer = this.firer(event);
+
+                // Ensuring
+                this.ensure('value', firer.getAttribute(this.indexAttribute) || '');
+
+                // Hiding
+                this.overlay.hide();
+
+                // Blurring
+                requestAnimationFrame(this.blur.bind(this));
+            },
+
+            // HANDLER
+            _handleAutocomplete() {
+
+                // Hiding
+                this.hide();
+
+                // Firing
+                this.debounce('autocomplete', () => this.fire('xp-input-autocomplete', {id: this.id, name: this.name, value: this.input.value}), this.delay);
+            },
+
+            // HANDLER
+            _handleBlur() {
+
+                // Let
+                let shady  = this.root.toString() === '[object DocumentFragment]',
+                    method = shady ? 'closest' : 'matches',
+                    root   = shady ? document : this.root;
+
+                // Hiding
+                requestAnimationFrame(() => root.activeElement && root.activeElement[method]('.option') || this.overlay.hide());
+            },
+
+            // HANDLER
+            _handleInput() {
+
+                // Sanitizing
+                this.sanitize(true);
+
+                // Ensuring
+                this.ensure('chars', this.input.value.length);
+                this.ensure('empty', this.input.value.length === 0 && !this.input.validity.badInput);
+                this.ensure('invalid', Boolean(this.invalidMessage || this.maxLength > 0 && this.chars > this.maxLength));
+            }
+        });
+    </script>
+
+</dom-module>

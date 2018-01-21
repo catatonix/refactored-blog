@@ -1,0 +1,155 @@
+<!--
+@license
+Copyright (c) 2017 The expand.js authors. All rights reserved.
+This code may only be used under the BSD style license found at https://expandjs.github.io/LICENSE.txt
+The complete set of authors may be found at https://expandjs.github.io/AUTHORS.txt
+The complete set of contributors may be found at https://expandjs.github.io/CONTRIBUTORS.txt
+-->
+
+<!--
+A behavior used to add text [Material Design input](https://www.google.com/design/spec/components/selection-controls.html) capabilities on a web component.
+
+@behavior mat-input-checked-behavior
+@since 1.0.0
+@category behaviors
+@description A behavior used to add text Material Design input capabilities on a web component
+@keywords material input, material design, expandjs, web components
+
+@homepage https://expandjs.com/components/mat-input-checked-behavior
+@repository https://github.com/expandjs/mat-elements
+@source https://github.com/expandjs/mat-elements/blob/master/mat-input-checked-behavior.html
+
+@behavior xp-input-value-behavior /bower_components/xp-elements/xp-input-value-behavior.html
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../expandjs/expandjs.html">
+<link rel="import" href="../xp-elements/xp-input-value-behavior.html">
+
+<script>
+
+    /**
+     * @polymerBehavior Polymer.MATInputValueBehaviorImp
+     */
+    Polymer.MATInputValueBehaviorImp = {
+
+        // OBSERVERS
+        observers: [
+            '__maxRowsChanged(maxRows, mirror)',
+            '__minRowsChanged(minRows, mirror)'
+        ],
+
+        // PROPERTIES
+        properties: {
+
+            /**
+             * The input's mirror.
+             *
+             * @attribute mirror
+             * @type Element
+             * @readonly
+             */
+            mirror: {
+                readOnly: true,
+                selector: '.mirror'
+            },
+
+            /**
+             * If set to true, the input is mirrored.
+             *
+             * @attribute mirrored
+             * @type boolean
+             * @default false
+             * @readonly
+             */
+            mirrored: {
+                computed: 'isTruthy(mirror)',
+                reflectToAttribute: true,
+                type: Boolean,
+                value: false
+            }
+        },
+
+        /*********************************************************************/
+
+        // COMPUTER
+        _computeCounter(chars, maxLength) {
+            return (maxLength && `${chars} / ${maxLength}`) || ``;
+        },
+
+        // COMPUTER
+        _computeDescription(description, invalidMessage) {
+            return invalidMessage || description || '';
+        },
+
+        // COMPUTER
+        _computeFloated(empty, floatAlways, floatDisabled, focused, fullWidth, label, type) {
+            return Boolean(label && !floatDisabled && !fullWidth && (floatAlways || focused || !empty) || ['date', 'datetime-local', 'time'].indexOf(type) > -1);
+        },
+
+        // COMPUTER
+        _computeLabel(label, floated, inputPrefix) {
+            return `${!floated && inputPrefix || ``}${label || ``}`;
+        },
+
+        // COMPUTER
+        _computeLabelOpacity(floated) {
+            return floated ? 'secondary' : 'hint';
+        },
+
+        /*********************************************************************/
+
+        // OBSERVER
+        __inputChanged(post) {
+
+            // Super
+            Polymer.XPInputBehaviorImp.__inputChanged.apply(this, arguments);
+
+            // Listening
+            if (this.mirror) { this.listen(post, 'input', '__handleMirror'); }
+
+            // Handling
+            if (this.mirror) { this.__handleMirror(); }
+        },
+
+        // OBSERVER
+        __maxRowsChanged() {
+
+            // Let
+            let rows = XP.toIndex(this.maxRows);
+
+            // Styling
+            this.async(() => this.mirror ? this.mirror.style.maxHeight = rows ? `${rows * 24}px` : `` : null);
+        },
+
+        // OBSERVER
+        __minRowsChanged() {
+
+            // Let
+            let rows = XP.toIndex(this.minRows) || 1;
+
+            // Styling
+            this.async(() => this.mirror ? this.mirror.style.minHeight = rows ? `${rows * 24}px` : `` : null);
+        },
+
+        /*********************************************************************/
+
+        // HANDLER
+        __handleMirror() {
+
+            // Let
+            let html = `${XP.escape(this.input.value).replace(/\n/g, '<br/>')}&nbsp;`;
+
+            // Mirroring
+            this.async(() => this.mirror ? this.mirror.innerHTML = html : null);
+        }
+    };
+
+    /**
+     * @polymerBehavior Polymer.MATInputValueBehavior
+     */
+    Polymer.MATInputValueBehavior = [
+        Polymer.XPInputValueBehavior,
+        Polymer.MATInputValueBehaviorImp
+    ];
+</script>

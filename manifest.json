@@ -1,0 +1,6 @@
+{
+  "name": "halrand-polymer",
+  "short_name": "halrand-polymer",
+  "start_url": "/",
+  "display": "standalone"
+}

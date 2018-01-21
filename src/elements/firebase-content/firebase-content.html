@@ -1,0 +1,239 @@
+<link rel="import" href="../../../bower_components/mat-elements/mat-spinner.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/adamantium-editor/adamantium-editor.html">
+<link rel="import" href="../../../bower_components/polymerfire/firebase-document.html">
+
+<dom-module id="firebase-content">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      #content:not(.richEditor){
+        opacity: 0;
+        transition: opacity 0.25s ease-in;
+        float: left;
+        min-height: 1em;
+        min-width: 20px;
+      }
+      :host([loaded]) #spinner{
+        opacity: 0;
+      }
+      :host([loaded]) #content, #spinner{
+        opacity: 1;
+      }
+      .button{
+        display: none;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        width: 60px;
+        min-width: 0;
+        height: 20px;
+        top: 20px;
+      }
+        .button span{
+          font-size: 12px;
+          width: 100%;
+          text-align: center;
+        }
+      #save{
+        background: green;
+        left: 0;
+      }
+      #edit{
+        background: orange;
+        left:70px;
+      }
+      #reset{
+        background: red;
+        left: 140px;
+      }
+      #closeEdit{
+        background: orange;
+        z-index: 10;
+        left: 0;
+        width: 130px;
+      }
+      #richEditor{
+        display: block;
+        opacity: 1;
+        transition: opacity 0.25s ease-in;
+        position: absolute;
+        top: 40px;
+        left: 0;
+        resize: both;
+        background: white;
+        width: 100%;
+        z-index: 10;
+        color: black;
+      }
+
+      #content:focus #richEditor, #content:focus #save, #content:focus #cancel{
+        display: none !important;
+      }
+      
+    </style>
+
+    <firebase-document path="[[path]]" data="{{raw_content}}"></firebase-document>
+
+    <mat-spinner id="spinner" color="red" showed></mat-spinner>
+    <div id="content" name="content"></div>
+    <paper-button id="closeEdit" class="button"><span>Hide Editor</span></paper-button>
+    <paper-button id="save" class="button"><span>Save</span></paper-button>
+    <paper-button id="edit" class="button"><span>Editor</span></paper-button>
+    <paper-button id="reset" class="button"><span>Reset</span></paper-button>    
+      
+    
+  </template>
+
+
+
+  <script>
+    /* TODO:
+    = add orange border / some indication text has been modified
+    - make save button display toast (and hide rich editor)
+    - add backup functionality (save last 10 versions of text field and use most recent)
+    - add functionality for admin options to only be displayed to admins!!! (important)
+    - add functionality to display and hide all edit buttons when area is clicked on / clicked out of (focus selector??!)
+    - (external, add auto path generation somehow for data storage)
+    - Endgame: move all firebase code into this module including initialisation and make it totally reusable (keep dependencies within module) (wire up firebase from a setup file?)
+    */
+
+    /**
+     * `firebase-content`
+     * content to grab data from firebase
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class FirebaseContent extends Polymer.Element {
+      static get is() { return 'firebase-content'; }
+      static get properties() {
+        return {
+          path: {               // location data should be accessed in the database
+            type: String  
+          },
+          loaded: {             // whether or not this path has been loaded from firebase yet
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          raw_content: {        // unmodified result of data at firebase path
+            type: String,
+            observer: "_contentChanged",
+            notify: true
+          },
+          processed_content: {    // processed result of raw_content, shows empty string instead of empty object if value is null
+            type: String,
+            value: ""
+          },
+          admin: {                // whether or not this node is rendered in admin mode allowing its data path to be editable
+            type: Boolean,
+            value: false
+          },
+          edit: {                 // whether or not this node is currently in editing mode
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          changed: {              // whether or not the currently displayed data has been altered from processed_content
+            type: Boolean,
+            value: false
+          },
+        };
+      }
+
+      ready(){
+        super.ready();
+        this._enableAdmin(); // only if admin
+        var that = this;
+      }
+
+
+      _contentChanged(val){
+        if ((!(Object.keys(val).length === 0 && val.constructor === Object)) || (typeof(val)==String)){
+          this.processed_content = val;
+          console.log("> data changed at: ", this.path, "\""+this.processed_content+"\"");
+          this.$.content.innerHTML = this.processed_content;
+          this.loaded = true;
+        }else{
+          this.processed_content = "";
+        }
+      }
+
+
+      _stopEdit(){
+        this._hideButtons();
+        this._hideRichEditor();
+      }
+      _startEdit(){
+        this._displayButtons();
+      }
+      
+
+      _save(){
+        this.raw_content = this.$.content.innerHTML;
+        // maybe wait for confirmation this has completed to display a toast on success?
+      }
+      _reset(){
+        this.$.content.innerHTML = this.processed_content;
+        this._hideRichEditor();
+      }
+
+      _enableAdmin(){
+        this._displayAdmin()
+        this._wireButtons();
+      }
+      
+      _displayAdmin(){
+        this.$.content.style.outline = "dashed 1px red";
+        this.$.content.onclick = this._startEdit.bind(this);
+        this.$.content.setAttribute("contenteditable", "true");
+        this.$.content.contenteditable = "true";
+      }
+      _wireButtons(){
+        this.$.save.onclick = this._save.bind(this);
+        this.$.edit.onclick = this._showRichEditor.bind(this);
+        this.$.reset.onclick = this._reset.bind(this);
+        this.$.closeEdit.onclick = this._hideRichEditor.bind(this);
+      }
+      _displayButtons(){
+        this.$.save.style.display = "inline-flex";
+        this.$.edit.style.display = "inline-flex";
+        this.$.reset.style.display = "inline-flex";
+      }
+      _hideButtons(){
+        this.$.save.style.display = "none";
+        this.$.edit.style.display = "none";
+      }
+      _hideRichEditor(){
+        this.$.closeEdit.style.display = "none";
+        // Todo remove editor from the DOM instead of chaning styles
+        this.$.content.innerHTML = this._getEditortext();
+        console.log(this.$.content.innerHTML);
+      }
+      _showRichEditor(){
+        this.$.closeEdit.style.display = "inline-flex";
+        var editor = document.createElement("adamantium-editor");
+        editor.id = "richEditor";
+        var editorContent = this.$.content.textContent;
+        this.$.content.innerHTML = "";
+        editorContent = editorContent.replace("<adamantium-editor id=\"richEditor\">", "");
+        editorContent = editorContent.replace("</adamantium-editor>", "");
+        this.$.content.appendChild(editor); 
+        this.$.content.querySelector("adamantium-editor").innerHTML = editorContent;
+      }
+      _getEditortext(){
+        var editorContent = this.$.content.querySelector("adamantium-editor").get();
+        editorContent = editorContent.replace("<adamantium-editor id=\"richEditor\">", "");
+        editorContent = editorContent.replace("</adamantium-editor>", "");
+        return editorContent;
+      }
+      
+    }
+
+    window.customElements.define(FirebaseContent.is, FirebaseContent);
+  </script>
+</dom-module>

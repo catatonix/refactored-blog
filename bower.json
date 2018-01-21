@@ -1,0 +1,17 @@
+{
+  "name": "halrand-polymer",
+  "main": "index.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0",
+    "polymerfire": "^2.2.1",
+    "spinkit-element": "^1.0.1",
+    "strand": "MediaMath/strand#^4.5.0",
+    "mat-elements": "expandjs/mat-elements#^1.4.1",
+    "paper-button": "^2.0.0",
+    "adamantium-editor": "^1.0.3"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+  }
+}

@@ -1,0 +1,78 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../elements/module-inner/module-inner.html">
+
+
+<dom-module id="module-landing">
+  <template>
+    <style>
+      :host {
+        display: block;
+        height: 100vh;
+        background: #000;
+        width: 100%;
+      }
+      h1{
+        color: #fff;
+        font-size: 85px;
+        font-weight: bold;
+        font-family: "Rubik",sans-serif;
+        width: 68%;
+        float: left;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        max-height: 100vh;
+      }
+      #goDown{
+        width: 58px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        cursor: pointer;
+      }
+    </style>
+
+    <module-inner size="1140px">
+      <!-- todo - wrap titlText in new custom module-data element (fade in on load) -->
+        <h1 id="title">
+          <slot></slot>
+        </h1>
+        <img id="goDown" class="icon" src="" on-click="raiseCurtain">
+    </module-inner>
+
+  </template>
+  
+
+  <script>
+    /**
+     * `module-landing`
+     * Full screen landing element with an arrow that scrolls itself out of the way, content is loaded through Firebase (requires firebase to be initialised in main app)
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class ModuleLanding extends Polymer.Element {
+      static get is() { return 'module-landing'; }
+      static get properties() {
+        return {
+          height: {
+            type: Number
+          }
+        };
+      }
+      ready(){
+        super.ready();
+        this.height = this.offsetHeight;
+        this.$.goDown.src = this.resolveUrl("assets/white-down-arrow.png");
+      }
+
+      raiseCurtain(){
+        window.scroll({ top: this.height, left: 0, behavior: 'smooth' });        
+      }
+
+    }
+
+    window.customElements.define(ModuleLanding.is, ModuleLanding);
+  </script>
+</dom-module>

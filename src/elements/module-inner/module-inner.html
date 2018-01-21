@@ -1,0 +1,60 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="module-inner">
+  <template>
+    <style>
+      :host {
+        display: block;
+        float: left;
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+      }
+    </style>
+    
+    <slot></slot>
+  </template>
+
+  <script>
+    /**
+     * `module-inner`
+     * effectively a centered div with a prespecified width
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class ModuleInner extends Polymer.Element {
+      static get is() { return 'module-inner'; }
+      static get properties() {
+        return {
+          size: {
+            type: String,
+            notify: true,
+            reflectToAttribute: true,
+            observer: '_render'    
+          },
+
+        }
+      }
+      ready(){
+        super.ready();
+        this._render();
+      }
+
+      _render(){
+        if (this.size == null){
+          this.size = "1140px";
+        }
+        this.updateStyles({"width": this.size});
+      }
+    }
+
+    window.customElements.define(ModuleInner.is, ModuleInner);
+  </script>
+</dom-module>
