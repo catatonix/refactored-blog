@@ -1,0 +1,65 @@
+<link rel="import" href="../elements/firebase-content.html">
+
+
+<dom-module id="firebase-project">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+   
+   <firebase-content class="input" path="[[titlePath]]"></firebase-content>
+   
+
+  </template>
+
+  <script>
+    /**
+     * `firebase-project`
+     * Displays a project with settable data
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class FirebaseProject extends Polymer.Element {
+      static get is() { return 'firebase-project'; }
+      static get properties() {
+        return {
+          projectID: {
+            type: Number          
+          },
+          titlePath: {
+            type: String
+          },
+          Description: {
+            type: String,
+          },
+          Images: {
+            type: Array
+          }
+        };
+      }
+
+      ready(){
+        super.ready();
+        this._setProjectID();
+        this._setTitlePath();
+      }
+
+      _setTitlePath(){
+        this.titlePath =  "projects/"+this.projectID+"/title";
+      }
+      _setProjectID(){
+        this.projectID = this.id;
+      }
+      openEditPanel(){
+
+      }
+      
+    }
+
+    window.customElements.define(FirebaseProject.is, FirebaseProject);
+  </script>
+</dom-module>
