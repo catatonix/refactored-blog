@@ -20,7 +20,7 @@
       }
       #mainButtons{
         display: none;
-        position: fixed;
+        position: absolute;
       }
       #spinner{
         position: absolute;
@@ -108,7 +108,7 @@
     - make save button display toast if successful (and hide rich editor)
     - add backup functionality (save last 10 versions of text field and use most recent)
     - add functionality for admin options to only be displayed to admins!!! (important)
-    - hide unused edit buttons (ie photo)
+    - hide unused edit buttons (ie photo, ask harlan / sophie / client)
     - let the buttons be usable on focus
     - (external, add auto path generation somehow for data storage)
     - make loading color externally configurable
@@ -148,11 +148,11 @@
             type: Boolean,
             value: false
           },
-          edit: {                 // whether or not this node is currently in editing mode
-            type: Boolean,
-            value: false,
-            reflectToAttribute: true
-          },
+          // edit: {                 // whether or not this node is currently in editing mode
+          //   type: Boolean,
+          //   value: false,
+          //   reflectToAttribute: true
+          // },
           changed: {              // whether or not the currently displayed data has been altered from processed_content
             type: Boolean,
             value: false
