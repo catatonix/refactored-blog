@@ -194,7 +194,7 @@
       }
       
       _displayAdmin(){
-        this.$.content.style.outline = "dashed 1px red";
+        this.$.content.style.outline = "dashed 1px green";
         this.$.content.setAttribute("contenteditable", "true");
         this.$.content.contenteditable = "true";
         this.$.content.keyup = this._highlightChange.bind(this);
@@ -218,7 +218,7 @@
             this._displayButtons();
           }
           else{
-            this.$.content.style.outline = "1px dashed red";
+            this.$.content.style.outline = "1px dashed green";
             this._hideButtons();
           }
         });
