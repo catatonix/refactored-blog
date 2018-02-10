@@ -1,6 +1,7 @@
+> Dev notes: polymer custom element + firebase solution for inline editable websites
+
 # \<halrand-polymer\>
 
-#This project is a demonstartion of the <firebase-element> custom element with live updating of values. Documentation is inline,
 
 ## Install the Polymer-CLI
 
